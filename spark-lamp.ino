@@ -176,24 +176,22 @@ void switchLamps(String state){
 
 /* set both lamps to the opposite of the button's lamp's current state */
 void matchToggle(String button){
+    int buttonBit;
+
+    // decide which button to check
     if (button == "DILLON"){
-        // currently on, so turn both off
-        if ((lampState & DILLON_BIT) == DILLON_BIT){
-            switchLamps("OFF");
-        }
-        // currently off, so turn both on
-        else {
-            switchLamps("ON");
-        }
+        buttonBit = DILLON_BIT;
     }
     else if (button == "SARA"){
-        // currently on, so turn both off
-        if ((lampState & SARA_BIT) == SARA_BIT){
-            switchLamps("OFF");
-        }
-        // currently off, so turn both on
-        else {
-            switchLamps("ON");
-        }
+        buttonBit = SARA_BIT;
+    }
+
+    // currently on, so turn both off
+    if ((lampState & buttonBit) == buttonBit){
+        switchLamps("OFF");
+    }
+    // currently off, so turn both on
+    else {
+        switchLamps("ON");
     }
 }
