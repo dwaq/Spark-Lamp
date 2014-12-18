@@ -104,10 +104,10 @@ if(dillonClicks == -1){
 }
 
 
-// Exposed function to turn lamps on, off, or toggle individually
+/* Exposed function to turn lamps on, off, or toggle individually */
 int webSwitch(String state){
     if(state == "ON"){
-        // turn both on
+        // turn both lamps on
         switchLamps(state);
     }
     else if(state == "DILLON"){
@@ -119,11 +119,12 @@ int webSwitch(String state){
         toggleSara();
     }
     else if(state == "OFF"){
-        // turn both off
+        // turn both lamps off
         switchLamps(state);
     }
 }
 
+/* toggle Dillon's lamp */
 void toggleDillon(){
     // toggle the state of Dillon's lamp
     lampState ^= DILLON_BIT;
@@ -140,6 +141,7 @@ void toggleDillon(){
     }
 }
 
+/* toggle Sara's lamp */
 void toggleSara(){
     // toggle the state of Sara's lamp
     lampState ^= SARA_BIT;
@@ -156,6 +158,7 @@ void toggleSara(){
     }
 }
 
+/* set both lamps to a new state */
 void switchLamps(String state){
     if(state == "ON"){
         // turn both lamps on
@@ -171,30 +174,26 @@ void switchLamps(String state){
     }
 }
 
-// toggle the cooresponding button's lamp
-// and then match the other lamp to that lamp's current state
+/* set both lamps to the opposite of the button's lamp's current state */
 void matchToggle(String button){
     if (button == "DILLON"){
-        toggleDillon();
-        int dillonState = lampState & DILLON_BIT;
-        int saraState = (lampState & SARA_BIT) >> 1;
-        //Serial.print(lampState);
-        //Serial.print(dillonState);
-        //Serial.println(saraState);
-        if (dillonState != saraState){
-            toggleSara();
-        }  
+        // currently on, so turn both off
+        if ((lampState & DILLON_BIT) == DILLON_BIT){
+            switchLamps("OFF");
+        }
+        // currently off, so turn both on
+        else {
+            switchLamps("ON");
+        }
     }
     else if (button == "SARA"){
-        toggleSara();
-        int dillonState = lampState & DILLON_BIT;
-        int saraState = (lampState & SARA_BIT) >> 1;
-        //Serial.print(lampState);
-        //Serial.print(dillonState);
-        //Serial.println(saraState);
-        if (dillonState != saraState){
-            toggleDillon();
-        }   
+        // currently on, so turn both off
+        if ((lampState & SARA_BIT) == SARA_BIT){
+            switchLamps("OFF");
+        }
+        // currently off, so turn both on
+        else {
+            switchLamps("ON");
+        }
     }
-    
 }
