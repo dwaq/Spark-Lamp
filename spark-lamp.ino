@@ -128,16 +128,15 @@ int webSwitch(String state){
 void toggleDillon(){
     // toggle the state of Dillon's lamp
     lampState ^= DILLON_BIT;
-    // new state for Dillon's lamp
-    int newState = lampState & DILLON_BIT;
+
     // send new state
-    if (newState == 0){
-        // turn off Dillon's lamp
-        mySwitch.send(DILLON_OFF, BIT_LENGTH);
-    }
-    if (newState == 1){
+    if ((lampState & DILLON_BIT) == DILLON_BIT){
         //turn on Dillon's lamp
         mySwitch.send(DILLON_ON, BIT_LENGTH);
+    }
+    else{
+        // turn off Dillon's lamp
+        mySwitch.send(DILLON_OFF, BIT_LENGTH);
     }
 }
 
@@ -145,16 +144,15 @@ void toggleDillon(){
 void toggleSara(){
     // toggle the state of Sara's lamp
     lampState ^= SARA_BIT;
-    // new state for Sara's lamp
-    int newState = lampState & SARA_BIT;
+
     // send new state
-    if (newState == 0){
-        // turn off Sara's lamp
-        mySwitch.send(SARA_OFF, BIT_LENGTH);
-    }
-    else{
+    if ((lampState & SARA_BIT) == SARA_BIT){
         // turn on Sara's lamp
         mySwitch.send(SARA_ON, BIT_LENGTH);
+    }
+    else{
+        // turn off Sara's lamp
+        mySwitch.send(SARA_OFF, BIT_LENGTH);
     }
 }
 
