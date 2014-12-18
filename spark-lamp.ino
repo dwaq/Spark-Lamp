@@ -1,4 +1,16 @@
 // This #include statement was automatically added by the Spark IDE.
+#include "clickButton/clickButton.h"
+
+// the Button
+//const int buttonPin1 = 4;
+ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
+ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
+
+// Button results 
+int dillonClicks = 0;
+int saraClicks = 0;
+
+// This #include statement was automatically added by the Spark IDE.
 #include "RCSwitch/RCSwitch.h"
 
 // switch object
@@ -28,17 +40,6 @@ RCSwitch mySwitch = RCSwitch();
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
 int lampState = 0b00;   // stores the state of both lamps
 
-// This #include statement was automatically added by the Spark IDE.
-#include "clickButton/clickButton.h"
-
-// the Button
-//const int buttonPin1 = 4;
-ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
-
-// Button results 
-int dillonClicks = 0;
-
-
 void setup()
 {
     Serial.begin(9600);
@@ -46,13 +47,19 @@ void setup()
 
     // set up the 3 switch pins as inputs
     pinMode(dillonLamp, INPUT_PULLUP);
-    pinMode(saraLamp, INPUT_PULLDOWN);
+    pinMode(saraLamp, INPUT_PULLUP);
     pinMode(lightSwitch, INPUT_PULLDOWN);
 
-    // if the pin changes value, go to its corresponding interrupt
-    //attachInterrupt(dillonLamp,   toggleDillon, RISING);
-    //attachInterrupt(saraLamp,     toggleSara,   RISING);
-    //attachInterrupt(lightSwitch,  switchLamps,  CHANGE);
+    // Setup button timers (all in milliseconds / ms)
+    // (These are default if not set, but changeable for convenience)
+    dillonButton.debounceTime   = 20;   // Debounce timer in ms
+    dillonButton.multiclickTime = 250;  // Time limit for multi clicks
+    dillonButton.longClickTime  = 1000; // time until "held-down clicks" register
+
+    // set Sara's timers the same as Dillon's
+    saraButton.debounceTime     = dillonButton.debounceTime;
+    saraButton.multiclickTime   = dillonButton.multiclickTime;
+    saraButton.longClickTime    = dillonButton.longClickTime;
 
     // setup the transmitter on pin D0
     mySwitch.enableTransmit(TRANSMITTER);
@@ -64,12 +71,6 @@ void setup()
 
     // make variable available to GET
     Spark.variable("state", &lampState, INT);
-
-  // Setup button timers (all in milliseconds / ms)
-  // (These are default if not set, but changeable for convenience)
-  dillonButton.debounceTime   = 20;   // Debounce timer in ms
-  dillonButton.multiclickTime = 250;  // Time limit for multi clicks
-  dillonButton.longClickTime  = 1000; // time until "held-down clicks" register
 }
 
 
