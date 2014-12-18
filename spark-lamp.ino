@@ -1,19 +1,19 @@
 // This #include statement was automatically added by the Spark IDE.
 #include "clickButton/clickButton.h"
 
-// the Button
+// set up the Click Button object
 //const int buttonPin1 = 4;
 ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
 ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 
 // Button results 
-int dillonClicks = 0;
-int saraClicks = 0;
+//int dillonClicks = 0;
+//int saraClicks = 0;
 
 // This #include statement was automatically added by the Spark IDE.
 #include "RCSwitch/RCSwitch.h"
 
-// switch object
+// set up the RC Switch object
 RCSwitch mySwitch = RCSwitch();
 
 // "addresses" for the relays
@@ -40,16 +40,17 @@ RCSwitch mySwitch = RCSwitch();
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
 int lampState = 0b00;   // stores the state of both lamps
 
+/* Set up pins and Spark web functions */
 void setup()
 {
     Serial.begin(9600);
-    //pinMode(D4, INPUT_PULLUP);
 
     // set up the 3 switch pins as inputs
     pinMode(dillonLamp, INPUT_PULLUP);
     pinMode(saraLamp, INPUT_PULLUP);
     pinMode(lightSwitch, INPUT_PULLDOWN);
 
+    /* set to these values by default - so no need to modify them
     // Setup button timers (all in milliseconds / ms)
     // (These are default if not set, but changeable for convenience)
     dillonButton.debounceTime   = 20;   // Debounce timer in ms
@@ -60,6 +61,7 @@ void setup()
     saraButton.debounceTime     = dillonButton.debounceTime;
     saraButton.multiclickTime   = dillonButton.multiclickTime;
     saraButton.longClickTime    = dillonButton.longClickTime;
+    */
 
     // setup the transmitter on pin D0
     mySwitch.enableTransmit(TRANSMITTER);
@@ -73,35 +75,52 @@ void setup()
     Spark.variable("state", &lampState, INT);
 }
 
-
+/* Continously check the button states */
 void loop()
 {
-  // Update button state
-  dillonButton.Update();
+    // Update buttons state
+    dillonButton.Update();
+    saraButton.Update();
 
-  // Save click codes in dillonClicks, as click codes are reset at next Update()
-  // is this line even needed?
-  // can't I just directly use dillonButton.clicks ?
-  // maybe I can wrap the 3 dillonClicks calls into this function?
-  if (dillonButton.clicks != 0) dillonClicks = dillonButton.clicks;
-  
-  if(dillonClicks == 1){
-      Serial.println("SINGLE click");
-      toggleDillon();
-  }
+    // Dillon's button was clicked
+    if (dillonButton.clicks != 0){
 
-  if(dillonClicks == 2){
-    Serial.println("DOUBLE click");
-    toggleSara();
-  } 
+        if(dillonButton.clicks == 1){
+            Serial.println("SINGLE click");
+            toggleDillon();
+        }
 
-if(dillonClicks == -1){
-      Serial.println("SINGLE LONG click");
-      matchToggle("DILLON");
-  }
-  
-  dillonClicks = 0;
-  delay(5);
+        if(dillonButton.clicks == 2){
+            Serial.println("DOUBLE click");
+            toggleSara();
+        } 
+
+        if(dillonButton.clicks == -1){
+            Serial.println("SINGLE LONG click");
+            matchToggle("DILLON");
+        }
+    }
+
+    // Sara's button was clicked
+    if (saraButton.clicks != 0){
+
+        if(saraButton.clicks == 1){
+            Serial.println("SINGLE click");
+            toggleSara();
+        }
+
+        if(saraButton.clicks == 2){
+            Serial.println("DOUBLE click");
+            toggleDillon();
+        } 
+
+        if(saraButton.clicks == -1){
+            Serial.println("SINGLE LONG click");
+            matchToggle("SARA");
+        }
+    }
+
+    delay(5);
 }
 
 
