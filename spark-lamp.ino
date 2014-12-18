@@ -1,16 +1,5 @@
 // This #include statement was automatically added by the Spark IDE.
 #include "clickButton/clickButton.h"
-
-// set up the Click Button object
-//const int buttonPin1 = 4;
-ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
-ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
-
-// Button results 
-//int dillonClicks = 0;
-//int saraClicks = 0;
-
-// This #include statement was automatically added by the Spark IDE.
 #include "RCSwitch/RCSwitch.h"
 
 // set up the RC Switch object
@@ -39,6 +28,15 @@ RCSwitch mySwitch = RCSwitch();
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
 int lampState = 0b00;   // stores the state of both lamps
+
+// set up the Click Button object
+//const int buttonPin1 = 4;
+ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
+ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
+
+// Button results 
+//int dillonClicks = 0;
+//int saraClicks = 0;
 
 /* Set up pins and Spark web functions */
 void setup()
