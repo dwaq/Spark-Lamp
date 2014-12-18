@@ -107,10 +107,8 @@ if(dillonClicks == -1){
 // Exposed function to turn lamps on, off, or toggle individually
 int webSwitch(String state){
     if(state == "ON"){
-        // turn both lamps on
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
-        mySwitch.send(SARA_ON, BIT_LENGTH);
-        lampState = 0b11;
+        // turn both on
+        switchLamps(state);
     }
     else if(state == "DILLON"){
         // toggle Dillon's lamp
@@ -121,10 +119,8 @@ int webSwitch(String state){
         toggleSara();
     }
     else if(state == "OFF"){
-        // turn both lamps off
-        mySwitch.send(DILLON_OFF, BIT_LENGTH);
-        mySwitch.send(SARA_OFF, BIT_LENGTH);
-        lampState = 0b00;
+        // turn both off
+        switchLamps(state);
     }
 }
 
@@ -160,6 +156,21 @@ void toggleSara(){
     }
 }
 
+void switchLamps(String state){
+    if(state == "ON"){
+        // turn both lamps on
+        mySwitch.send(DILLON_ON, BIT_LENGTH);
+        mySwitch.send(SARA_ON, BIT_LENGTH);
+        lampState = 0b11;
+    }
+    else if(state == "OFF"){
+        // turn both lamps off
+        mySwitch.send(DILLON_OFF, BIT_LENGTH);
+        mySwitch.send(SARA_OFF, BIT_LENGTH);
+        lampState = 0b00;
+    }
+}
+
 // toggle the cooresponding button's lamp
 // and then match the other lamp to that lamp's current state
 void matchToggle(String button){
@@ -186,19 +197,4 @@ void matchToggle(String button){
         }   
     }
     
-}
-
-void switchLamps(){
-    if (digitalRead(lightSwitch) == LOW){
-        // turn both lamps off
-        mySwitch.send(DILLON_OFF, BIT_LENGTH);
-        mySwitch.send(SARA_OFF, BIT_LENGTH);
-        lampState = 0b00;
-    }
-    else{
-        // turn both lamps on
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
-        mySwitch.send(SARA_ON, BIT_LENGTH);
-        lampState = 0b11;
-    }
 }
