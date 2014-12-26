@@ -20,9 +20,9 @@ RCSwitch mySwitch = RCSwitch();
 
 // pin definitions
 #define TRANSMITTER D0  // 433 Mhz transmitter
-#define dillonLamp A5   // Dillon's lamp switch
-#define saraLamp A6     // Sara's lamp switch
-#define lightSwitch A4  // room light switch
+#define dillonLamp D4   // Dillon's lamp switch
+#define saraLamp D2     // Sara's lamp switch
+#define lightSwitch A7  // room light switch
 
 // the lamp's state is stored in a two bit binary number
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
@@ -47,6 +47,9 @@ void setup()
     pinMode(dillonLamp, INPUT_PULLUP);
     pinMode(saraLamp, INPUT_PULLUP);
     pinMode(lightSwitch, INPUT_PULLDOWN);
+
+    // if the lightSwtich pin changes value, go to its interrupt
+    attachInterrupt(lightSwitch, lightSwitchLamps, CHANGE);
 
     /* set to these values by default - so no need to modify them
     // Setup button timers (all in milliseconds / ms)
@@ -209,5 +212,20 @@ void matchToggle(String button){
     // currently off, so turn both on
     else {
         switchLamps("ON");
+    }
+}
+
+void lightSwitchLamps(){
+    if (digitalRead(lightSwitch) == LOW){
+        // turn both lamps off
+        mySwitch.send(DILLON_OFF, BIT_LENGTH);
+        mySwitch.send(SARA_OFF, BIT_LENGTH);
+        lampState = 0b00;
+    }
+    else{
+        // turn both lamps on
+        mySwitch.send(DILLON_ON, BIT_LENGTH);
+        mySwitch.send(SARA_ON, BIT_LENGTH);
+        lampState = 0b11;
     }
 }
