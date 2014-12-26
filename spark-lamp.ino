@@ -181,8 +181,8 @@ void toggleSara(){
 void switchLamps(String state){
     if(state == "ON"){
         // turn both lamps on
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
         mySwitch.send(SARA_ON, BIT_LENGTH);
+        mySwitch.send(DILLON_ON, BIT_LENGTH);
         lampState = 0b11;
     }
     else if(state == "OFF"){
@@ -215,6 +215,7 @@ void matchToggle(String button){
     }
 }
 
+/* set both lamps to the state of the lightswitch */
 void lightSwitchLamps(){
     if (digitalRead(lightSwitch) == LOW){
         // turn both lamps off
@@ -224,8 +225,8 @@ void lightSwitchLamps(){
     }
     else{
         // turn both lamps on
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
         mySwitch.send(SARA_ON, BIT_LENGTH);
+        mySwitch.send(DILLON_ON, BIT_LENGTH);
         lampState = 0b11;
     }
 }
