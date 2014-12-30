@@ -74,6 +74,12 @@ void setup()
 
     // make variable available to GET
     Spark.variable("state", &lampState, INT);
+    
+    // take control of the RGB status LED
+    RGB.control(true);
+    
+    // set the RGB LED brightness to 0% or off
+    RGB.brightness(0);
 }
 
 /* Continously check the button states */
