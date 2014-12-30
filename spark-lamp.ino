@@ -41,7 +41,7 @@ ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 /* Set up pins and Spark web functions */
 void setup()
 {
-    Serial.begin(9600);
+    //Serial.begin(9600);
 
     // set up the 3 switch pins as inputs
     pinMode(dillonLamp, INPUT_PULLUP);
@@ -93,17 +93,17 @@ void loop()
     if (dillonButton.clicks != 0){
 
         if(dillonButton.clicks == 1){
-            Serial.println("SINGLE click");
+            //Serial.println("SINGLE click");
             toggleDillon();
         }
 
         if(dillonButton.clicks == 2){
-            Serial.println("DOUBLE click");
+            //Serial.println("DOUBLE click");
             toggleSara();
         } 
 
         if(dillonButton.clicks == -1){
-            Serial.println("SINGLE LONG click");
+            //Serial.println("SINGLE LONG click");
             matchToggle("DILLON");
         }
     }
@@ -112,17 +112,17 @@ void loop()
     if (saraButton.clicks != 0){
 
         if(saraButton.clicks == 1){
-            Serial.println("SINGLE click");
+            //Serial.println("SINGLE click");
             toggleSara();
         }
 
         if(saraButton.clicks == 2){
-            Serial.println("DOUBLE click");
+            //Serial.println("DOUBLE click");
             toggleDillon();
         } 
 
         if(saraButton.clicks == -1){
-            Serial.println("SINGLE LONG click");
+            //Serial.println("SINGLE LONG click");
             matchToggle("SARA");
         }
     }
