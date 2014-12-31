@@ -34,10 +34,6 @@ int lampState = 0b00;   // stores the state of both lamps
 ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
 ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 
-// Button results 
-//int dillonClicks = 0;
-//int saraClicks = 0;
-
 /* Set up pins and Spark web functions */
 void setup()
 {
@@ -50,19 +46,6 @@ void setup()
 
     // if the lightSwtich pin changes value, go to its interrupt
     attachInterrupt(lightSwitch, lightSwitchLamps, CHANGE);
-
-    /* set to these values by default - so no need to modify them
-    // Setup button timers (all in milliseconds / ms)
-    // (These are default if not set, but changeable for convenience)
-    dillonButton.debounceTime   = 20;   // Debounce timer in ms
-    dillonButton.multiclickTime = 250;  // Time limit for multi clicks
-    dillonButton.longClickTime  = 1000; // time until "held-down clicks" register
-
-    // set Sara's timers the same as Dillon's
-    saraButton.debounceTime     = dillonButton.debounceTime;
-    saraButton.multiclickTime   = dillonButton.multiclickTime;
-    saraButton.longClickTime    = dillonButton.longClickTime;
-    */
 
     // setup the transmitter on pin D0
     mySwitch.enableTransmit(TRANSMITTER);
