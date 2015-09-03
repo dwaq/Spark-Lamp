@@ -25,8 +25,14 @@ RCSwitch mySwitch = RCSwitch();
 #define lightSwitch A7  // room light switch
 
 // stores the state of the lightSwitch
-// set to a different value than 0/1 to catch initial state
-int lightSwitchState = 3;
+/*
+  Defaults to 1 so, if the switch is on when it powers up,
+  the lights will not turn on.
+  This will be useful if there is a power outage in the middle
+  of the night, so regardless of the switch position, the lights
+  won't automatically turn on.
+*/
+int lightSwitchState = 1;
 
 // the lamp's state is stored in a two bit binary number
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
