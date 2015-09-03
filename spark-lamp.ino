@@ -24,6 +24,10 @@ RCSwitch mySwitch = RCSwitch();
 #define saraLamp D2     // Sara's lamp switch
 #define lightSwitch A7  // room light switch
 
+// stores the state of the lightSwitch
+// set to a different value than 0/1 to catch initial state
+int lightSwitchState = 3;
+
 // the lamp's state is stored in a two bit binary number
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
@@ -44,9 +48,6 @@ void setup()
     pinMode(saraLamp, INPUT_PULLUP);
     pinMode(lightSwitch, INPUT_PULLDOWN);
 
-    // if the lightSwtich pin changes value, go to its interrupt
-    attachInterrupt(lightSwitch, lightSwitchLamps, CHANGE);
-
     // setup the transmitter on pin D0
     mySwitch.enableTransmit(TRANSMITTER);
     // Set pulse length of a bit
@@ -57,10 +58,10 @@ void setup()
 
     // make variable available to GET
     Spark.variable("state", &lampState, INT);
-    
+
     // take control of the RGB status LED
     RGB.control(true);
-    
+
     // set the RGB LED brightness to 0% or off
     RGB.brightness(0);
 }
@@ -68,6 +69,27 @@ void setup()
 /* Continously check the button states */
 void loop()
 {
+    if (digitalRead(lightSwitch) == LOW){
+        // turn both lamps off if they're not already
+        if (lightSwitchState != 0){
+            lightSwitchState = 0;
+            //Serial.println("off");
+            mySwitch.send(DILLON_OFF, BIT_LENGTH);
+            mySwitch.send(SARA_OFF, BIT_LENGTH);
+            lampState = 0b00;
+        }
+    }
+    else{
+        // turn both lamps on if they're not already
+        if (lightSwitchState != 1){
+            lightSwitchState = 1;
+            //Serial.println("on");
+            mySwitch.send(SARA_ON, BIT_LENGTH);
+            mySwitch.send(DILLON_ON, BIT_LENGTH);
+            lampState = 0b11;
+        }
+    }
+
     // Update buttons state
     dillonButton.Update();
     saraButton.Update();
@@ -83,7 +105,7 @@ void loop()
         if(dillonButton.clicks == 2){
             //Serial.println("DOUBLE click");
             toggleSara();
-        } 
+        }
 
         if(dillonButton.clicks == -1){
             //Serial.println("SINGLE LONG click");
@@ -102,7 +124,7 @@ void loop()
         if(saraButton.clicks == 2){
             //Serial.println("DOUBLE click");
             toggleDillon();
-        } 
+        }
 
         if(saraButton.clicks == -1){
             //Serial.println("SINGLE LONG click");
@@ -201,21 +223,5 @@ void matchToggle(String button){
     // currently off, so turn both on
     else {
         switchLamps("ON");
-    }
-}
-
-/* set both lamps to the state of the lightswitch */
-void lightSwitchLamps(){
-    if (digitalRead(lightSwitch) == LOW){
-        // turn both lamps off
-        mySwitch.send(DILLON_OFF, BIT_LENGTH);
-        mySwitch.send(SARA_OFF, BIT_LENGTH);
-        lampState = 0b00;
-    }
-    else{
-        // turn both lamps on
-        mySwitch.send(SARA_ON, BIT_LENGTH);
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
-        lampState = 0b11;
     }
 }
