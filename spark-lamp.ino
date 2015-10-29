@@ -22,7 +22,7 @@ RCSwitch mySwitch = RCSwitch();
 #define TRANSMITTER D0  // 433 Mhz transmitter
 #define dillonLamp D4   // Dillon's lamp switch
 #define saraLamp D2     // Sara's lamp switch
-#define lightSwitch A7  // room light switch
+#define lightSwitch D3  // room light switch
 
 // stores the state of the lightSwitch
 /*
