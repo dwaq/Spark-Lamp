@@ -54,6 +54,9 @@ void setup()
     pinMode(saraLamp, INPUT_PULLUP);
     pinMode(lightSwitch, INPUT_PULLDOWN);
 
+    // if the lightSwtich pin changes value, go to its interrupt
+    attachInterrupt(lightSwitch, lightSwitchLamps, CHANGE);
+
     // setup the transmitter on pin D0
     mySwitch.enableTransmit(TRANSMITTER);
     // Set pulse length of a bit
@@ -75,27 +78,6 @@ void setup()
 /* Continously check the button states */
 void loop()
 {
-    if (digitalRead(lightSwitch) == LOW){
-        // turn both lamps off if they're not already
-        if (lightSwitchState != 0){
-            lightSwitchState = 0;
-            //Serial.println("off");
-            mySwitch.send(DILLON_OFF, BIT_LENGTH);
-            mySwitch.send(SARA_OFF, BIT_LENGTH);
-            lampState = 0b00;
-        }
-    }
-    else{
-        // turn both lamps on if they're not already
-        if (lightSwitchState != 1){
-            lightSwitchState = 1;
-            //Serial.println("on");
-            mySwitch.send(SARA_ON, BIT_LENGTH);
-            mySwitch.send(DILLON_ON, BIT_LENGTH);
-            lampState = 0b11;
-        }
-    }
-
     // Update buttons state
     dillonButton.Update();
     saraButton.Update();
@@ -229,5 +211,21 @@ void matchToggle(String button){
     // currently off, so turn both on
     else {
         switchLamps("ON");
+    }
+}
+
+/* set both lamps to the state of the lightswitch */
+void lightSwitchLamps(){
+    if (digitalRead(lightSwitch) == LOW){
+        // turn both lamps off
+        mySwitch.send(DILLON_OFF, BIT_LENGTH);
+        mySwitch.send(SARA_OFF, BIT_LENGTH);
+        lampState = 0b00;
+    }
+    else{
+        // turn both lamps on
+        mySwitch.send(SARA_ON, BIT_LENGTH);
+        mySwitch.send(DILLON_ON, BIT_LENGTH);
+        lampState = 0b11;
     }
 }
