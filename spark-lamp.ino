@@ -44,6 +44,12 @@ int lampState = 0b00;   // stores the state of both lamps
 ClickButton dillonButton(dillonLamp, LOW, CLICKBTN_PULLUP);
 ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 
+/* There's an issue with the relay interrupt being called right after
+   a lamp switch is pressed (but only if the light switch is "off"),
+   so we use this counter to block the interrupt */
+int blockInterrupt = 0;
+#define blockInterruptTimes 5
+
 /* Set up pins and Spark web functions */
 void setup()
 {
@@ -82,21 +88,31 @@ void loop()
     dillonButton.Update();
     saraButton.Update();
 
+    // count down as it goes through the loop
+    if (blockInterrupt)
+    {
+        //Serial.println(blockInterrupt);
+        blockInterrupt--;
+    }
+
     // Dillon's button was clicked
     if (dillonButton.clicks != 0){
 
         if(dillonButton.clicks == 1){
             //Serial.println("SINGLE click");
+            blockInterrupt = blockInterruptTimes;
             toggleDillon();
         }
 
         if(dillonButton.clicks == 2){
             //Serial.println("DOUBLE click");
+            blockInterrupt = blockInterruptTimes;
             toggleSara();
         }
 
         if(dillonButton.clicks == -1){
             //Serial.println("SINGLE LONG click");
+            blockInterrupt = blockInterruptTimes;
             matchToggle("DILLON");
         }
     }
@@ -106,16 +122,19 @@ void loop()
 
         if(saraButton.clicks == 1){
             //Serial.println("SINGLE click");
+            blockInterrupt = blockInterruptTimes;
             toggleSara();
         }
 
         if(saraButton.clicks == 2){
             //Serial.println("DOUBLE click");
+            blockInterrupt = blockInterruptTimes;
             toggleDillon();
         }
 
         if(saraButton.clicks == -1){
             //Serial.println("SINGLE LONG click");
+            blockInterrupt = blockInterruptTimes;
             matchToggle("SARA");
         }
     }
@@ -216,16 +235,28 @@ void matchToggle(String button){
 
 /* set both lamps to the state of the lightswitch */
 void lightSwitchLamps(){
-    if (digitalRead(lightSwitch) == LOW){
-        // turn both lamps off
-        mySwitch.send(DILLON_OFF, BIT_LENGTH);
-        mySwitch.send(SARA_OFF, BIT_LENGTH);
-        lampState = 0b00;
-    }
-    else{
-        // turn both lamps on
-        mySwitch.send(SARA_ON, BIT_LENGTH);
-        mySwitch.send(DILLON_ON, BIT_LENGTH);
-        lampState = 0b11;
+    // only trust this interrupt if the state hasn't changed recently
+    /* Note: Due to the relay bouncing, this interrupt is called multiple
+       times in a row for one switching motion. We don't want to debounce
+       them in software because it's useful to quickly switch the lights
+       from one state to another to get them in sync */
+    if (blockInterrupt == 0)
+    {
+        if (digitalRead(lightSwitch) == LOW){
+            //Serial.println("lightSwitch off");
+            //blockInterrupt = blockInterruptTimes;
+            // turn both lamps off
+            mySwitch.send(DILLON_OFF, BIT_LENGTH);
+            mySwitch.send(SARA_OFF, BIT_LENGTH);
+            lampState = 0b00;
+        }
+        else{
+            //Serial.println("lightSwitch on");
+            //blockInterrupt = blockInterruptTimes;
+            // turn both lamps on
+            mySwitch.send(SARA_ON, BIT_LENGTH);
+            mySwitch.send(DILLON_ON, BIT_LENGTH);
+            lampState = 0b11;
+        }
     }
 }
