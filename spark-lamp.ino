@@ -74,6 +74,9 @@ void setup()
     // create function(s) so app can change states
     Spark.function("switch", webSwitch);
 
+    // create new function for liquor lights
+    Spark.function("liquorSwitch", webLiquorSwitch);
+
     // make variable available to GET
     Spark.variable("state", &lampState, INT);
 
@@ -164,6 +167,20 @@ int webSwitch(String state){
         // turn both lamps off
         switchLamps(state);
     }
+}
+
+/* Exposed function to turn Liquor lights on or off */
+int webLiquorSwitch(int state){
+  // 0 is off
+  if(state == 0){
+    // turn liquor lights off
+    mySwitch.send(LIQUOR_OFF, BIT_LENGTH);
+  }
+  // 1 is on
+  else if(state == 1){
+    // turn liquor lights on
+    mySwitch.send(LIQUOR_ON, BIT_LENGTH);
+  }
 }
 
 /* toggle Dillon's lamp */
