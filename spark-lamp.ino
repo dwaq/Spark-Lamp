@@ -1,4 +1,4 @@
-// This #include statement was automatically added by the Spark IDE.
+// This #include statement was automatically added by the Particle IDE.
 #include "clickButton/clickButton.h"
 #include "RCSwitch/RCSwitch.h"
 
@@ -53,7 +53,7 @@ ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 int blockInterrupt = 0;
 #define blockInterruptTimes 5
 
-/* Set up pins and Spark web functions */
+/* Set up pins and Particle web functions */
 void setup()
 {
     //Serial.begin(9600);
@@ -72,13 +72,13 @@ void setup()
     mySwitch.setPulseLength(PULSE_LENGTH);
 
     // create function(s) so app can change states
-    Spark.function("switch", webSwitch);
+    Particle.function("switch", webSwitch);
 
     // create new function for liquor lights
-    Spark.function("liquorSwitch", webLiquorSwitch);
+    Particle.function("liquorSwitch", webLiquorSwitch);
 
     // make variable available to GET
-    Spark.variable("state", &lampState, INT);
+    Particle.variable("state", &lampState, INT);
 
     // take control of the RGB status LED
     RGB.control(true);
