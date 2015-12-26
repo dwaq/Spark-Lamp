@@ -170,14 +170,12 @@ int webSwitch(String state){
 }
 
 /* Exposed function to turn Liquor lights on or off */
-int webLiquorSwitch(int state){
-  // 0 is off
-  if(state == 0){
+int webLiquorSwitch(String state){
+  if(state == "OFF"){
     // turn liquor lights off
     mySwitch.send(LIQUOR_OFF, BIT_LENGTH);
   }
-  // 1 is on
-  else if(state == 1){
+  else if(state == "ON"){
     // turn liquor lights on
     mySwitch.send(LIQUOR_ON, BIT_LENGTH);
   }
