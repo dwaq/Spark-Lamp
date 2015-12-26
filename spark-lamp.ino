@@ -37,6 +37,9 @@ RCSwitch mySwitch = RCSwitch();
 */
 int lightSwitchState = 1;
 
+// stores the state of the liquorSwitch
+int liquorSwitchState =0;
+
 // the lamp's state is stored in a two bit binary number
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
@@ -171,13 +174,26 @@ int webSwitch(String state){
 
 /* Exposed function to turn Liquor lights on or off */
 int webLiquorSwitch(String state){
+  if(state == "TOGGLE"){
+    // toggle liquor lights by setting the state to the opposite
+    // of the current state
+    if (liquorSwitchState == 0){
+      state = "ON";
+    }
+    else if(liquorSwitchState == 1){
+      state = "OFF";
+    }
+  }
+
   if(state == "OFF"){
     // turn liquor lights off
     mySwitch.send(LIQUOR_OFF, BIT_LENGTH);
+    liquorSwitchState = 0;
   }
   else if(state == "ON"){
     // turn liquor lights on
     mySwitch.send(LIQUOR_ON, BIT_LENGTH);
+    liquorSwitchState = 1;
   }
 }
 
