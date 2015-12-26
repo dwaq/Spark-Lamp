@@ -75,7 +75,7 @@ void setup()
     Particle.function("switch", webSwitch);
 
     // create new function for liquor lights
-    Particle.function("liquorSwitch", webLiquorSwitch);
+    Particle.function("liquor", webLiquorSwitch);
 
     // make variable available to GET
     Particle.variable("state", &lampState, INT);
