@@ -12,6 +12,9 @@ RCSwitch mySwitch = RCSwitch();
 #define SARA_ON     4527555  // 0x4515C3
 #define SARA_OFF    4527564  // 0x4515CC
 
+#define LIQUOR_ON   0x451703
+#define LIQUOR_OFF  0x45170C
+
 // length of each bit
 #define PULSE_LENGTH 190     // 0xBE
 
