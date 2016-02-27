@@ -1,4 +1,4 @@
-// This #include statement was automatically added by the Spark IDE.
+// This #include statement was automatically added by the Particle IDE.
 #include "clickButton/clickButton.h"
 #include "RCSwitch/RCSwitch.h"
 
@@ -11,6 +11,9 @@ RCSwitch mySwitch = RCSwitch();
 
 #define SARA_ON     4527555  // 0x4515C3
 #define SARA_OFF    4527564  // 0x4515CC
+
+#define LIQUOR_ON   0x451703
+#define LIQUOR_OFF  0x45170C
 
 // length of each bit
 #define PULSE_LENGTH 190     // 0xBE
@@ -34,6 +37,9 @@ RCSwitch mySwitch = RCSwitch();
 */
 int lightSwitchState = 1;
 
+// stores the state of the liquorSwitch
+int liquorSwitchState =0;
+
 // the lamp's state is stored in a two bit binary number
 #define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
 #define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
@@ -50,7 +56,7 @@ ClickButton saraButton(saraLamp, LOW, CLICKBTN_PULLUP);
 int blockInterrupt = 0;
 #define blockInterruptTimes 5
 
-/* Set up pins and Spark web functions */
+/* Set up pins and Particle web functions */
 void setup()
 {
     //Serial.begin(9600);
@@ -69,10 +75,13 @@ void setup()
     mySwitch.setPulseLength(PULSE_LENGTH);
 
     // create function(s) so app can change states
-    Spark.function("switch", webSwitch);
+    Particle.function("switch", webSwitch);
+
+    // create new function for liquor lights
+    Particle.function("liquor", webLiquorSwitch);
 
     // make variable available to GET
-    Spark.variable("state", &lampState, INT);
+    Particle.variable("state", &lampState, INT);
 
     // take control of the RGB status LED
     RGB.control(true);
@@ -161,6 +170,31 @@ int webSwitch(String state){
         // turn both lamps off
         switchLamps(state);
     }
+}
+
+/* Exposed function to turn Liquor lights on or off */
+int webLiquorSwitch(String state){
+  if(state == "TOGGLE"){
+    // toggle liquor lights by setting the state to the opposite
+    // of the current state
+    if (liquorSwitchState == 0){
+      state = "ON";
+    }
+    else if(liquorSwitchState == 1){
+      state = "OFF";
+    }
+  }
+
+  if(state == "OFF"){
+    // turn liquor lights off
+    mySwitch.send(LIQUOR_OFF, BIT_LENGTH);
+    liquorSwitchState = 0;
+  }
+  else if(state == "ON"){
+    // turn liquor lights on
+    mySwitch.send(LIQUOR_ON, BIT_LENGTH);
+    liquorSwitchState = 1;
+  }
 }
 
 /* toggle Dillon's lamp */
