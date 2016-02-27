@@ -34,10 +34,10 @@ RCSwitch mySwitch = RCSwitch();
 */
 int lightSwitchState = 1;
 
-// the lamp's state is stored in a two bit binary number
-#define DILLON_BIT 0b01 // bit 0 is the state of Dillon's lamp
-#define SARA_BIT 0b10   // bit 1 is the state of Sara's lamp
-int lampState = 0b00;   // stores the state of both lamps
+// store states of lights in individual variables
+bool dillonStatus = false;
+bool saraStatus = false;
+bool liquorStatus = false;
 
 // set up the Click Button object
 //const int buttonPin1 = 4;
@@ -166,10 +166,10 @@ int webSwitch(String state){
 /* toggle Dillon's lamp */
 void toggleDillon(){
     // toggle the state of Dillon's lamp
-    lampState ^= DILLON_BIT;
+    dillonStatus = !dillonStatus;
 
     // send new state
-    if ((lampState & DILLON_BIT) == DILLON_BIT){
+    if (dillonStatus){
         //turn on Dillon's lamp
         mySwitch.send(DILLON_ON, BIT_LENGTH);
     }
@@ -182,10 +182,10 @@ void toggleDillon(){
 /* toggle Sara's lamp */
 void toggleSara(){
     // toggle the state of Sara's lamp
-    lampState ^= SARA_BIT;
+    saraStatus = !saraStatus;
 
     // send new state
-    if ((lampState & SARA_BIT) == SARA_BIT){
+    if (saraStatus){
         // turn on Sara's lamp
         mySwitch.send(SARA_ON, BIT_LENGTH);
     }
@@ -200,31 +200,33 @@ void switchLamps(String state){
     if(state == "ON"){
         // turn both lamps on
         mySwitch.send(SARA_ON, BIT_LENGTH);
+        saraStatus = true;
         mySwitch.send(DILLON_ON, BIT_LENGTH);
-        lampState = 0b11;
+        dillonStatus = true;
     }
     else if(state == "OFF"){
         // turn both lamps off
         mySwitch.send(DILLON_OFF, BIT_LENGTH);
+        dillonStatus = false;
         mySwitch.send(SARA_OFF, BIT_LENGTH);
-        lampState = 0b00;
+        saraStatus = false;
     }
 }
 
 /* set both lamps to the opposite of the button's lamp's current state */
 void matchToggle(String button){
-    int buttonBit;
+    bool buttonBit;
 
     // decide which button to check
     if (button == "DILLON"){
-        buttonBit = DILLON_BIT;
+        buttonBit = !dillonStatus;
     }
     else if (button == "SARA"){
-        buttonBit = SARA_BIT;
+        buttonBit = !saraStatus;
     }
 
     // currently on, so turn both off
-    if ((lampState & buttonBit) == buttonBit){
+    if (buttonBit){
         switchLamps("OFF");
     }
     // currently off, so turn both on
