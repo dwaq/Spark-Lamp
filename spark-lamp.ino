@@ -248,17 +248,13 @@ void lightSwitchLamps(){
             //Serial.println("lightSwitch off");
             //blockInterrupt = blockInterruptTimes;
             // turn both lamps off
-            mySwitch.send(DILLON_OFF, BIT_LENGTH);
-            mySwitch.send(SARA_OFF, BIT_LENGTH);
-            lampState = 0b00;
+            switchLamps("OFF");
         }
         else{
             //Serial.println("lightSwitch on");
             //blockInterrupt = blockInterruptTimes;
             // turn both lamps on
-            mySwitch.send(SARA_ON, BIT_LENGTH);
-            mySwitch.send(DILLON_ON, BIT_LENGTH);
-            lampState = 0b11;
+            switchLamps("ON");
         }
     }
 }
