@@ -68,6 +68,9 @@ void setup()
     // Set pulse length of a bit
     mySwitch.setPulseLength(PULSE_LENGTH);
 
+    // TODO: turn all lights off by default
+
+
     // create function(s) so app can change states
     Spark.function("switch", webSwitch);
 
