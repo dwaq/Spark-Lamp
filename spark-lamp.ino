@@ -219,6 +219,9 @@ int webLiquorSwitch(String state){
     mySwitch.send(LIQUOR_ON, BIT_LENGTH);
     liquorSwitchState = 1;
   }
+
+  // POST data to webhook
+  Particle.publish("liquorSwitchState_webhook", String(liquorSwitchState), 60, PRIVATE);
 }
 
 /* toggle Dillon's lamp */
