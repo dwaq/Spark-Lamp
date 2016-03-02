@@ -211,6 +211,9 @@ void toggleDillon(){
         // turn off Dillon's lamp
         mySwitch.send(DILLON_OFF, BIT_LENGTH);
     }
+
+    // POST data to webhook
+    Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
 }
 
 /* toggle Sara's lamp */
@@ -227,6 +230,9 @@ void toggleSara(){
         // turn off Sara's lamp
         mySwitch.send(SARA_OFF, BIT_LENGTH);
     }
+
+    // POST data to webhook
+    Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
 }
 
 /* set both lamps to a new state */
@@ -243,6 +249,9 @@ void switchLamps(String state){
         mySwitch.send(SARA_OFF, BIT_LENGTH);
         lampState = 0b00;
     }
+
+    // POST data to webhook
+    Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
 }
 
 /* set both lamps to the opposite of the button's lamp's current state */
@@ -292,5 +301,8 @@ void lightSwitchLamps(){
             mySwitch.send(DILLON_ON, BIT_LENGTH);
             lampState = 0b11;
         }
+
+        // POST data to webhook
+        Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
     }
 }
