@@ -27,15 +27,17 @@ RCSwitch mySwitch = RCSwitch();
 #define saraLamp D2     // Sara's lamp switch
 #define lightSwitch A0  // room light switch
 
-// stores the state of the lightSwitch
 /*
-  Defaults to 1 so, if the switch is on when it powers up,
-  the lights will not turn on.
   This will be useful if there is a power outage in the middle
   of the night, so regardless of the switch position, the lights
   won't automatically turn on.
 */
+// stores the state of the lightSwitch
 int lightSwitchState = 1;
+
+/* wait a bit after seeing an interrupt to actually set the state */
+int debounce = 0;
+#define debounceTimes 5
 
 // stores the state of the liquorSwitch
 int liquorSwitchState =0;
@@ -102,6 +104,28 @@ void loop()
     {
         //Serial.println(blockInterrupt);
         blockInterrupt--;
+    }
+
+    // count down as it goes through the loop
+    if (debounce)
+    {
+        debounce--;
+        // after 5 times without changes
+        if(!debounce)
+        {
+            // switch is now stable
+            // POST data to webhook
+            Particle.publish("lightSwitchState_webhook", String(lightSwitchState), 60, PRIVATE);
+            // then set to correct state
+            if(lightSwitchState)
+            {
+                switchLamps("ON");
+            }
+            else
+            {
+                switchLamps("OFF");
+            }
+        }
     }
 
     // Dillon's button was clicked
@@ -280,32 +304,20 @@ void matchToggle(String button){
 void lightSwitchLamps(){
     // only trust this interrupt if the state hasn't changed recently
     /* Note: Due to the relay bouncing, this interrupt is called multiple
-       times in a row for one switching motion. We don't want to debounce
-       them in software because it's useful to quickly switch the lights
+       times in a row for one switching motion. We want to debounce them
+       seperately in software because it's useful to quickly switch the lights
        from one state to another to get them in sync */
     if (blockInterrupt == 0)
     {
         if (digitalRead(lightSwitch) == LOW){
             //Serial.println("lightSwitch off");
-            //blockInterrupt = blockInterruptTimes;
+            debounce = debounceTimes;
             lightSwitchState = 0;
-            // turn both lamps off
-            mySwitch.send(DILLON_OFF, BIT_LENGTH);
-            mySwitch.send(SARA_OFF, BIT_LENGTH);
-            lampState = 0b00;
         }
         else{
             //Serial.println("lightSwitch on");
-            //blockInterrupt = blockInterruptTimes;
+            debounce = debounceTimes;
             lightSwitchState = 1;
-            // turn both lamps on
-            mySwitch.send(SARA_ON, BIT_LENGTH);
-            mySwitch.send(DILLON_ON, BIT_LENGTH);
-            lampState = 0b11;
         }
-
-        // POST data to webhook
-        Particle.publish("lightSwitchState_webhook", String(lightSwitchState), 60, PRIVATE);
-        Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
     }
 }
