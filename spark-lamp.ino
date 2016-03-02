@@ -288,6 +288,7 @@ void lightSwitchLamps(){
         if (digitalRead(lightSwitch) == LOW){
             //Serial.println("lightSwitch off");
             //blockInterrupt = blockInterruptTimes;
+            lightSwitchState = 0;
             // turn both lamps off
             mySwitch.send(DILLON_OFF, BIT_LENGTH);
             mySwitch.send(SARA_OFF, BIT_LENGTH);
@@ -296,6 +297,7 @@ void lightSwitchLamps(){
         else{
             //Serial.println("lightSwitch on");
             //blockInterrupt = blockInterruptTimes;
+            lightSwitchState = 1;
             // turn both lamps on
             mySwitch.send(SARA_ON, BIT_LENGTH);
             mySwitch.send(DILLON_ON, BIT_LENGTH);
@@ -303,6 +305,7 @@ void lightSwitchLamps(){
         }
 
         // POST data to webhook
+        Particle.publish("lightSwitchState_webhook", String(lightSwitchState), 60, PRIVATE);
         Particle.publish("lampState_webhook", String(lampState), 60, PRIVATE);
     }
 }
